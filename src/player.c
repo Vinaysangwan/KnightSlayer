@@ -5,7 +5,9 @@
 //****************************************************************************
 SDL_Texture* player_texture = NULL;
 const SDL_FRect sprite_position = {16,16,16,16};
-const SDL_FRect player_position = {100,100,16,16};
+const int ispeed = 200;
+SDL_FRect player_position = {0,0,16,16};
+
 
 //****************************************************************************
 //************************* Cleanup Player ***********************************
@@ -28,7 +30,24 @@ void handle_Event_Player(SDL_Event* event)
 //****************************************************************************
 void update_Player(float delta_time)
 {
+    const _Bool* keyboard_state = SDL_GetKeyboardState(NULL);
 
+    if(keyboard_state[SDL_SCANCODE_W])
+    {
+        player_position.y -= ispeed * delta_time;
+    }
+    if(keyboard_state[SDL_SCANCODE_S])
+    {
+        player_position.y += ispeed * delta_time;
+    }
+    if(keyboard_state[SDL_SCANCODE_A])
+    {
+        player_position.x -= ispeed * delta_time;
+    }
+    if(keyboard_state[SDL_SCANCODE_D])
+    {
+        player_position.x += ispeed * delta_time;
+    }
 }
 
 //****************************************************************************
