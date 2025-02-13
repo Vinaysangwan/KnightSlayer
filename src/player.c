@@ -4,10 +4,29 @@
 //************************* Variables ****************************************
 //****************************************************************************
 SDL_Texture* player_texture = NULL;
-const SDL_FRect sprite_position = {16,16,16,16};
+SDL_FRect sprite_position = {128,16,16,16};
 const int ispeed = 200;
-SDL_FRect player_position = {0,0,16,16};
+SDL_FRect player_position = {0,0,32,32};
+float fps = 0;
+char direction = 's';
 
+//****************************************************************************
+//************************* Play Player Animation ****************************
+//****************************************************************************
+void play_Player_Animation(int starting_position_x,int starting_position_y)
+{
+    if (fps/60 >= 3)
+    {
+        fps = 0;
+        sprite_position.y = starting_position_y;
+
+        if(sprite_position.x >= starting_position_x + 16 * 5) {
+            sprite_position.x = starting_position_x;
+        } else {
+            sprite_position.x += 16;
+        }
+    }
+}
 
 //****************************************************************************
 //************************* Cleanup Player ***********************************
@@ -31,23 +50,59 @@ void handle_Event_Player(SDL_Event* event)
 void update_Player(float delta_time)
 {
     const _Bool* keyboard_state = SDL_GetKeyboardState(NULL);
+    int velocity[] = {0,0};
 
     if(keyboard_state[SDL_SCANCODE_W])
     {
-        player_position.y -= ispeed * delta_time;
+        velocity[1] -= ispeed * delta_time;
+        direction = 'w';
     }
     if(keyboard_state[SDL_SCANCODE_S])
     {
-        player_position.y += ispeed * delta_time;
+        velocity[1] += ispeed * delta_time;
+        direction = 's';
     }
     if(keyboard_state[SDL_SCANCODE_A])
     {
-        player_position.x -= ispeed * delta_time;
+        velocity[0] -= ispeed * delta_time;
+        direction = 'a';
     }
     if(keyboard_state[SDL_SCANCODE_D])
     {
-        player_position.x += ispeed * delta_time;
+        velocity[0] += ispeed * delta_time;
+        direction = 'd';
     }
+
+    fps++;
+
+    // When the player is Idle
+    if(velocity[0] == 0 && velocity[1] == 0){
+        if(direction == 'w'){
+            play_Player_Animation(128,64);
+        } else if(direction == 's'){
+            play_Player_Animation(128,16);
+        } else if(direction == 'a'){
+            play_Player_Animation(128,32);
+        } else if(direction == 'd'){
+            play_Player_Animation(128,48);
+        }
+    } 
+    
+    // When the player is in motion
+    else {
+        if(direction == 'w'){
+            play_Player_Animation(16,64);
+        } else if(direction == 's'){
+            play_Player_Animation(16,16);
+        } else if(direction == 'a'){
+            play_Player_Animation(16,32);
+        } else if(direction == 'd'){
+            play_Player_Animation(16,48);
+        }
+    }
+
+    player_position.x += velocity[0];
+    player_position.y += velocity[1];
 }
 
 //****************************************************************************
