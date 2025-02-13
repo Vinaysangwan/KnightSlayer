@@ -5,9 +5,9 @@
 
 typedef struct
 {
-    void(*render)(void* appstate);
-    void(*update)(void);
-    void(*handle_Event)(SDL_Event *event);
+    void(*render)(SDL_Renderer*);
+    void(*update)(float);
+    void(*handle_Event)(SDL_Event*);
     void(*cleanup)(void);
 }Entity;
 

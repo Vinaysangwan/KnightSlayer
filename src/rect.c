@@ -1,42 +1,75 @@
 #include "rect.h"
 
-SDL_FRect rect;
+static SDL_FRect rect;
 
-void cleanup_Rect()
+typedef struct {
+    int x;
+    int y;
+}Position;
+
+Position position = {0,0};
+
+//********************************************************************************************************************
+//**************************************************** Cleanup  ******************************************************
+//********************************************************************************************************************
+static void cleanup_Rect()
+{
+    
+}
+
+//********************************************************************************************************************
+//**************************************************** Handle Event **************************************************
+//********************************************************************************************************************
+static void handle_Event_Rect(SDL_Event *event)
 {
 
 }
 
-void handle_Event_Rect(SDL_Event *event)
+//********************************************************************************************************************
+//**************************************************** Update ********************************************************
+//********************************************************************************************************************
+static void update_Rect(float delta_time)
 {
+    const _Bool* keyboard_state = SDL_GetKeyboardState(NULL);
+    const int speed = 100;
 
+    if(keyboard_state[SDL_SCANCODE_W])
+    {
+        position.y -= speed * delta_time;
+    }
+    if(keyboard_state[SDL_SCANCODE_S])
+    {
+        position.y += speed * delta_time;
+    }
+    if(keyboard_state[SDL_SCANCODE_A])
+    {
+        position.x -= speed * delta_time;
+    }
+    if(keyboard_state[SDL_SCANCODE_D])
+    {
+        position.x += speed * delta_time;
+    }
 }
 
-void update_Rect()
+//********************************************************************************************************************
+//**************************************************** Render ********************************************************
+//********************************************************************************************************************
+static void render_Rect(SDL_Renderer *renderer)
 {
-
-}
-
-void render_Rect(void *appstate)
-{
-    AppState *state = (AppState *)appstate;
-
-    SDL_SetRenderDrawColor(state->renderer,255,0,0,255);
-}
-
-void init_Rect(void *appstate)
-{
-    AppState *state = (AppState *)appstate;
-
-    rect.x = 50;
-    rect.y = 50;
     rect.w = 100;
     rect.h = 100;
-    
-    if(!SDL_SetRenderDrawColor(state->renderer,255,0,0,255))
-    {
-        SDL_Log("Error setting draw color: %s",SDL_GetError());
-    }
+    rect.x = position.x;
+    rect.y = position.y;
+
+    SDL_SetRenderDrawColor(renderer,255,0,0,255);
+    SDL_RenderRect(renderer, &rect);
+}
+
+//********************************************************************************************************************
+//**************************************************** Init **********************************************************
+//********************************************************************************************************************
+void init_Rect(void *appstate)
+{
 
     Entity rect = {
         .render = render_Rect,
@@ -44,4 +77,6 @@ void init_Rect(void *appstate)
         .handle_Event = handle_Event_Rect,
         .cleanup = cleanup_Rect,
     };
+
+    create_Entity(rect);
 }

@@ -6,4 +6,7 @@ typedef struct
 {
     SDL_Window* window;
     SDL_Renderer* renderer;
+    float last_tick;
+    float current_tick;
+    float delta_time;
 }AppState;
