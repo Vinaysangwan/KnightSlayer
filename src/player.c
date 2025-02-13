@@ -69,7 +69,10 @@ void init_Player(void *appstate)
     player_texture = IMG_LoadTexture(state->renderer, path);
 
     // Making the texture pixelated(Better for pixel art)
-    SDL_SetTextureScaleMode(player_texture, SDL_SCALEMODE_NEAREST);
+    if(!SDL_SetTextureScaleMode(player_texture, SDL_SCALEMODE_NEAREST))
+    {
+        SDL_Log("Error setting texture scale mode: %s",SDL_GetError());
+    }
 
     Entity player = {
         .render = render_Player,

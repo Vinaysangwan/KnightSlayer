@@ -1,6 +1,6 @@
 #pragma once
 #include<SDL3/SDL.h>
-#include "entity.h"
+#include "../entity.h"
 
 typedef struct
 {

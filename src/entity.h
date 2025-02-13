@@ -1,5 +1,5 @@
 #pragma once
-#include "common.h"
+#include "./sdl/common.h"
 
 #define MAX_ENTITIES 100
 

@@ -2,7 +2,7 @@
 
 SDL_AppResult SDL_AppInit(void **appstate,int argc,char **argv)
 {
-    AppState* state = (AppState*)SDL_malloc(sizeof(AppState));
+    AppState* state = SDL_malloc(sizeof(AppState));
     *appstate = state;
 
     if(!SDL_Init(SDL_INIT_VIDEO))
