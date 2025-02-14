@@ -3,27 +3,33 @@
 //****************************************************************************
 //************************* Variables ****************************************
 //****************************************************************************
+#define PLAYER_SPEED 200
+#define SPRITE_SIZE 16
+#define IDLE_ANIMATION_START_X 128
+#define RUN_ANIMATION_START_X 16
+#define FRAME_DELAY 2
+#define SCALE 1
+
 SDL_Texture* player_texture = NULL;
-SDL_FRect sprite_position = {128,16,16,16};
-const int ispeed = 200;
-SDL_FRect player_position = {0,0,32,32};
-float fps = 0;
-char direction = 's';
+SDL_FRect sprite_position = {IDLE_ANIMATION_START_X,16,SPRITE_SIZE,SPRITE_SIZE};
+SDL_FRect player_position = {0,0,SCALE * SPRITE_SIZE, SCALE * SPRITE_SIZE};
+float frame_counter = 0;
+char direction = 's'; // Direction of the player Movement
 
 //****************************************************************************
 //************************* Play Player Animation ****************************
 //****************************************************************************
 void play_Player_Animation(int starting_position_x,int starting_position_y)
 {
-    if (fps/60 >= 3)
+    if (frame_counter/60 >= FRAME_DELAY)
     {
-        fps = 0;
+        frame_counter = 0;
         sprite_position.y = starting_position_y;
 
-        if(sprite_position.x >= starting_position_x + 16 * 5) {
+        if(sprite_position.x >= starting_position_x + SPRITE_SIZE * 5) {
             sprite_position.x = starting_position_x;
         } else {
-            sprite_position.x += 16;
+            sprite_position.x += SPRITE_SIZE;
         }
     }
 }
@@ -50,59 +56,55 @@ void handle_Event_Player(SDL_Event* event)
 void update_Player(float delta_time)
 {
     const _Bool* keyboard_state = SDL_GetKeyboardState(NULL);
-    int velocity[] = {0,0};
+    float velocity_x = 0 , velocity_y = 0;
 
     if(keyboard_state[SDL_SCANCODE_W])
     {
-        velocity[1] -= ispeed * delta_time;
+        velocity_y -= PLAYER_SPEED * delta_time;
         direction = 'w';
     }
     if(keyboard_state[SDL_SCANCODE_S])
     {
-        velocity[1] += ispeed * delta_time;
+        velocity_y += PLAYER_SPEED * delta_time;
         direction = 's';
     }
     if(keyboard_state[SDL_SCANCODE_A])
     {
-        velocity[0] -= ispeed * delta_time;
+        velocity_x -= PLAYER_SPEED * delta_time;
         direction = 'a';
     }
     if(keyboard_state[SDL_SCANCODE_D])
     {
-        velocity[0] += ispeed * delta_time;
+        velocity_x += PLAYER_SPEED * delta_time;
         direction = 'd';
     }
 
-    fps++;
-
-    // When the player is Idle
-    if(velocity[0] == 0 && velocity[1] == 0){
-        if(direction == 'w'){
-            play_Player_Animation(128,64);
-        } else if(direction == 's'){
-            play_Player_Animation(128,16);
-        } else if(direction == 'a'){
-            play_Player_Animation(128,32);
-        } else if(direction == 'd'){
-            play_Player_Animation(128,48);
-        }
-    } 
-    
-    // When the player is in motion
-    else {
-        if(direction == 'w'){
-            play_Player_Animation(16,64);
-        } else if(direction == 's'){
-            play_Player_Animation(16,16);
-        } else if(direction == 'a'){
-            play_Player_Animation(16,32);
-        } else if(direction == 'd'){
-            play_Player_Animation(16,48);
-        }
+    // Normalizing the velocity
+    if(velocity_x != 0 && velocity_y != 0)
+    {
+        velocity_x *= 0.7071f; 
+        velocity_y *= 0.7071f; 
     }
 
-    player_position.x += velocity[0];
-    player_position.y += velocity[1];
+    frame_counter++;
+
+    // The Animation x coordinate
+    int animation_start_x = (velocity_x == 0 && velocity_y == 0) ? IDLE_ANIMATION_START_X : RUN_ANIMATION_START_X;
+    // The animation y coordinate
+    int animation_start_y = 0;
+
+    switch (direction) {
+        case 'w': animation_start_y = 64;break;
+        case 's': animation_start_y = 16;break;
+        case 'a': animation_start_y = 32;break;
+        case 'd': animation_start_y = 48;break;
+    }
+
+    // Playing the animation
+    play_Player_Animation(animation_start_x,animation_start_y);
+    
+    player_position.x += velocity_x;
+    player_position.y += velocity_y;
 }
 
 //****************************************************************************
