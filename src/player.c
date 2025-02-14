@@ -1,7 +1,7 @@
 #include "player.h"
 
 //****************************************************************************
-//************************* Variables ****************************************
+//************************* Constants ****************************************
 //****************************************************************************
 #define PLAYER_SPEED 200
 #define SPRITE_SIZE 16
@@ -10,6 +10,9 @@
 #define FRAME_DELAY 3
 #define SCALE 3
 
+//****************************************************************************
+//************************* Variables ****************************************
+//****************************************************************************
 typedef enum {
     UP,
     DOWN,
@@ -27,11 +30,11 @@ float frame_counter = 0;
 //****************************************************************************
 //************************* Play Player Animation ****************************
 //****************************************************************************
-void play_Player_Animation(int starting_position_x,int starting_position_y)
+void play_Player_Animation(float delta_time,int starting_position_x,int starting_position_y)
 {
-    frame_counter++;
+    frame_counter += delta_time;
 
-    if (frame_counter/60 >= FRAME_DELAY)
+    if (frame_counter >= FRAME_DELAY / 60.0f)
     {
         frame_counter = 0;
         sprite_position.y = starting_position_y;
@@ -115,7 +118,7 @@ void update_Player(float delta_time)
     }
 
     // Playing the animation
-    play_Player_Animation(animation_start_x,animation_start_y);
+    play_Player_Animation(delta_time,animation_start_x,animation_start_y);
     
     player_position.x += velocity_x;
     player_position.y += velocity_y;
